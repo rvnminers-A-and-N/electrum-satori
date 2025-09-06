@@ -24,15 +24,15 @@ export PATH=$PATH:~/bin
 
 
 if [ -z "$1" ]; then
-    echo "Usage: $0 Electrum-Evrmore.app"
+    echo "Usage: $0 Electrum-Satori.app"
     exit -127
 fi
 
 mkdir -p ~/bin
 
 if ! which ${genisoimage} > /dev/null 2>&1; then
-    mkdir -p /tmp/electrum-evrmore-macos
-    cd /tmp/electrum-evrmore-macos
+    mkdir -p /tmp/electrum-satori-macos
+    cd /tmp/electrum-satori-macos
     info "Downloading cdrkit $cdrkit_version"
     wget -nc ${cdrkit_download_path}/${cdrkit_file_name}
     tar xvf ${cdrkit_file_name}
@@ -48,8 +48,8 @@ if ! which ${genisoimage} > /dev/null 2>&1; then
 fi
 
 if ! which dmg > /dev/null 2>&1; then
-    mkdir -p /tmp/electrum-evrmore-macos
-    cd /tmp/electrum-evrmore-macos
+    mkdir -p /tmp/electrum-satori-macos
+    cd /tmp/electrum-satori-macos
     info "Downloading libdmg"
     LD_PRELOAD= git clone ${libdmg_url}
     cd libdmg-hfsplus
@@ -67,9 +67,9 @@ test -f "$plist" || fail "Info.plist not found"
 VERSION=$(grep -1 ShortVersionString $plist | tail -1 | gawk 'match($0, /<string>(.*)<\/string>/, a) {print a[1]}')
 echo $VERSION
 
-rm -rf /tmp/electrum-evrmore-macos/image > /dev/null 2>&1
-mkdir /tmp/electrum-evrmore-macos/image/
-cp -r $1 /tmp/electrum-evrmore-macos/image/
+rm -rf /tmp/electrum-satori-macos/image > /dev/null 2>&1
+mkdir /tmp/electrum-satori-macos/image/
+cp -r $1 /tmp/electrum-satori-macos/image/
 
 build_dir=$(dirname "$1")
 test -n "$build_dir" -a -d "$build_dir" || exit
@@ -80,16 +80,16 @@ ${genisoimage} \
     -D \
     -l \
     -probe \
-    -V "Electrum-Evrmore" \
+    -V "Electrum-Satori" \
     -no-pad \
     -r \
     -dir-mode 0755 \
     -apple \
-    -o Electrum_Evrmore_uncompressed.dmg \
+    -o Electrum_Satori_uncompressed.dmg \
     /tmp/electrum-macos/image || fail "Unable to create uncompressed dmg"
 
-dmg dmg Electrum_Evrmore_uncompressed.dmg electrum-evrmore-$VERSION.dmg || fail "Unable to create compressed dmg"
-rm Electrum_Evrmore_uncompressed.dmg
+dmg dmg Electrum_Satori_uncompressed.dmg electrum-satori-$VERSION.dmg || fail "Unable to create compressed dmg"
+rm Electrum_Satori_uncompressed.dmg
 
 echo "Done."
-sha256sum electrum-evrmore-$VERSION.dmg
+sha256sum electrum-satori-$VERSION.dmg
