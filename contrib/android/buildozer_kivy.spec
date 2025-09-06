@@ -1,13 +1,13 @@
 [app]
 
 # (str) Title of your application
-title = Electrum-Evrmore
+title = Electrum-Satori
 
 # (str) Package name
-package.name = Electrum_Evrmore
+package.name = Electrum_Satori
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = org.electrum-evrmore
+package.domain = org.electrum-satori
 
 # (str) Source code where the main.py live
 source.dir = .
@@ -130,7 +130,7 @@ android.add_src = electrum/gui/kivy/data/java-classes/
 
 android.gradle_dependencies = me.dm7.barcodescanner:zxing:1.9.8
 
-android.add_activities = org.electrum-evrmore.qr.SimpleScannerActivity
+android.add_activities = org.electrum-satori.qr.SimpleScannerActivity
 
 # (str) python-for-android branch to use, if not master, useful to try
 # not yet merged features.
