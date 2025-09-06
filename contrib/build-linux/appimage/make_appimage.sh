@@ -20,7 +20,7 @@ PY_VER_MAJOR="3.9"  # as it appears in fs paths
 PKG2APPIMAGE_COMMIT="a9c85b7e61a3a883f4a35c41c5decb5af88b6b5d"
 
 VERSION=$(git describe --tags --dirty --always)
-APPIMAGE="$DISTDIR/electrum-evrmore-$VERSION-x86_64.AppImage"
+APPIMAGE="$DISTDIR/electrum-satori-$VERSION-x86_64.AppImage"
 
 . "$CONTRIB"/build_tools_util.sh
 
@@ -166,11 +166,11 @@ info "installing electrum and its dependencies."
 
 # For evrhash, we are creating a local pypi since we haven't uploaded to pypi.org
 #"$python" -m pip install --no-binary :all: --no-warn-script-location \
-#    --cache-dir "$PIP_CACHE_DIR" -r "$CONTRIB/deterministic-build/requirements-evrmore-binaries.txt"
+#    --cache-dir "$PIP_CACHE_DIR" -r "$CONTRIB/deterministic-build/requirements-satori-binaries.txt"
 info "the ENV value PROJECT_ROOT is: $PROJECT_ROOT"
 info "contents of local-pypi: "`ls /opt/electrum/local-pypi/`
 "$python" -m pip install --no-binary :all: --no-warn-script-location --index-url "file://$PROJECT_ROOT/local-pypi/" \
-    --cache-dir "$PIP_CACHE_DIR" -r "$CONTRIB/deterministic-build/requirements-evrmore-binaries.txt"
+    --cache-dir "$PIP_CACHE_DIR" -r "$CONTRIB/deterministic-build/requirements-satori-binaries.txt"
 
 "$python" -m pip install --no-build-isolation --no-dependencies --no-binary :all: --no-warn-script-location \
     --cache-dir "$PIP_CACHE_DIR" -r "$CONTRIB/deterministic-build/requirements-hw.txt"
@@ -187,8 +187,8 @@ cp "/usr/lib/x86_64-linux-gnu/libzbar.so.0" "$APPDIR/usr/lib/libzbar.so.0"
 
 
 info "desktop integration."
-cp "$PROJECT_ROOT/electrum-evrmore.desktop" "$APPDIR/electrum-evrmore.desktop"
-cp "$PROJECT_ROOT/electrum/gui/icons/electrum-evrmore.png" "$APPDIR/electrum-evrmore.png"
+cp "$PROJECT_ROOT/electrum-satori.desktop" "$APPDIR/electrum-satori.desktop"
+cp "$PROJECT_ROOT/electrum/gui/icons/electrum-satori.png" "$APPDIR/electrum-satori.png"
 
 
 # add launcher
