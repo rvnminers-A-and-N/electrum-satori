@@ -14,9 +14,9 @@ from aiorpcx.curio import timeout_after, TaskTimeout
 import aiohttp
 
 from . import util
-from .evrmore import COIN
+from .satori import COIN
 from .i18n import _
-from .util import (EvrmoreValue, ThreadJob, make_dir, log_exceptions, OldTaskGroup,
+from .util import (SatoriValue, ThreadJob, make_dir, log_exceptions, OldTaskGroup,
                    make_aiohttp_session, resource_path, EventListener, event_listener)
 from .network import Network
 from .simple_config import SimpleConfig
@@ -171,11 +171,11 @@ class SafeTrade(ExchangeBase):
     async def get_currencies(self):
         dicts = await self.get_json('safe.trade',
                                     '/api/v2/peatio/public/markets')
-        return [d['name'][4:] for d in dicts if d['name'][:4] == 'EVR/']
+        return [d['name'][4:] for d in dicts if d['name'][:4] == 'SAT/']
 
     async def get_rates(self, ccy):
         dicts = await self.get_json('safe.trade',
-                                    '/api/v2/peatio/public/markets/evr%s/tickers' % ccy.lower())
+                                    '/api/v2/peatio/public/markets/sat%s/tickers' % ccy.lower())
         return {ccy: to_decimal(dicts['ticker']['last'])}
 
     def history_ccys(self):
@@ -183,7 +183,7 @@ class SafeTrade(ExchangeBase):
 
     async def request_history(self, ccy):
         dicts = await self.get_json('safe.trade',
-                                    '/api/v2/peatio/public/markets/evr%s/kline?period=1440' % ccy.lower())
+                                    '/api/v2/peatio/public/markets/sat%s/kline?period=1440' % ccy.lower())
         return dict([(datetime.utcfromtimestamp(d[0]).strftime('%Y-%m-%d'), to_decimal(d[4])) for d in dicts])
 
 #class CoinGecko(ExchangeBase):
@@ -444,8 +444,8 @@ class FxThread(ThreadJob, EventListener):
             rate = self.exchange_rate()
         else:
             rate = self.timestamp_rate(timestamp)
-        if isinstance(btc_balance, EvrmoreValue):
-            btc_balance = btc_balance.evr_value.value
+        if isinstance(btc_balance, SatoriValue):
+            btc_balance = btc_balance.sat_value.value
         return '' if rate.is_nan() else "%s %s" % (self.value_str(btc_balance, rate), self.ccy)
 
     def get_fiat_status_text(self, btc_balance, base_unit, decimal_point):
