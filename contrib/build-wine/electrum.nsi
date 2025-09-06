@@ -6,9 +6,9 @@
 ;--------------------------------
 ;Variables
 
-  !define PRODUCT_NAME "Electrum-Evrmore"
-  !define PRODUCT_WEB_SITE "https://github.com/EvrmoreOrg/electrum-evrmore"
-  !define PRODUCT_PUBLISHER "The Evrmore Community"
+  !define PRODUCT_NAME "Electrum-Satori"
+  !define PRODUCT_WEB_SITE "https://github.com/SatoriNetwork/electrum-satori"
+  !define PRODUCT_PUBLISHER "The Satori Community and Echelon Technology Group"
   !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 
 ;--------------------------------
@@ -16,7 +16,7 @@
 
   ;Name and file
   Name "${PRODUCT_NAME}"
-  OutFile "dist/electrum-evrmore-setup.exe"
+  OutFile "dist/electrum-satori-setup.exe"
 
   ;Default installation folder
   InstallDir "$PROGRAMFILES\${PRODUCT_NAME}"
@@ -58,7 +58,7 @@
   VIAddVersionKey ProductName "${PRODUCT_NAME} Installer"
   VIAddVersionKey Comments "The installer for ${PRODUCT_NAME}"
   VIAddVersionKey CompanyName "${PRODUCT_NAME}"
-  VIAddVersionKey LegalCopyright "2021-2021 ${PRODUCT_PUBLISHER}"
+  VIAddVersionKey LegalCopyright "2024-2025 ${PRODUCT_PUBLISHER}"
   VIAddVersionKey FileDescription "${PRODUCT_NAME} Installer"
   VIAddVersionKey FileVersion ${PRODUCT_VERSION}
   VIAddVersionKey ProductVersion ${PRODUCT_VERSION}
@@ -72,7 +72,7 @@
   !define MUI_ABORTWARNING
   !define MUI_ABORTWARNING_TEXT "Are you sure you wish to abort the installation of ${PRODUCT_NAME}?"
 
-  !define MUI_ICON "..\..\electrum\gui\icons\electrum-evrmore.ico"
+  !define MUI_ICON "..\..\electrum\gui\icons\electrum-satori.ico"
 
 ;--------------------------------
 ;Pages
@@ -111,7 +111,7 @@ Section
 
   ;Files to pack into the installer
   File /r "dist\electrum\*.*"
-  File "..\..\electrum\gui\icons\electrum-evrmore.ico"
+  File "..\..\electrum\gui\icons\electrum-satori.ico"
 
   ;Store installation folder
   WriteRegStr HKCU "Software\${PRODUCT_NAME}" "" $INSTDIR
@@ -122,25 +122,25 @@ Section
 
   ;Create desktop shortcut
   DetailPrint "Creating desktop shortcut..."
-  CreateShortCut "$DESKTOP\${PRODUCT_NAME}.lnk" "$INSTDIR\electrum-evrmore-${PRODUCT_VERSION}.exe" ""
+  CreateShortCut "$DESKTOP\${PRODUCT_NAME}.lnk" "$INSTDIR\electrum-satori-${PRODUCT_VERSION}.exe" ""
 
   ;Create start-menu items
   DetailPrint "Creating start-menu items..."
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME}"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\Uninstall.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME}.lnk" "$INSTDIR\electrum-evrmore-${PRODUCT_VERSION}.exe" "" "$INSTDIR\electrum-${PRODUCT_VERSION}.exe" 0
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME} Testnet.lnk" "$INSTDIR\electrum-evrmore-${PRODUCT_VERSION}.exe" "--testnet" "$INSTDIR\electrum-${PRODUCT_VERSION}.exe" 0
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME}.lnk" "$INSTDIR\electrum-satori-${PRODUCT_VERSION}.exe" "" "$INSTDIR\electrum-${PRODUCT_VERSION}.exe" 0
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME} Testnet.lnk" "$INSTDIR\electrum-satori-${PRODUCT_VERSION}.exe" "--testnet" "$INSTDIR\electrum-${PRODUCT_VERSION}.exe" 0
 
 
   ;Links bitcoin: and lightning: URIs to Electrum
   ;WriteRegStr HKCU "Software\Classes\bitcoin" "" "URL:bitcoin Protocol"
   ;WriteRegStr HKCU "Software\Classes\bitcoin" "URL Protocol" ""
-  ;WriteRegStr HKCU "Software\Classes\bitcoin" "DefaultIcon" "$\"$INSTDIR\electrum-evrmore.ico, 0$\""
-  ;WriteRegStr HKCU "Software\Classes\bitcoin\shell\open\command" "" "$\"$INSTDIR\electrum-evrmore-${PRODUCT_VERSION}.exe$\" $\"%1$\""
+  ;WriteRegStr HKCU "Software\Classes\bitcoin" "DefaultIcon" "$\"$INSTDIR\electrum-satori.ico, 0$\""
+  ;WriteRegStr HKCU "Software\Classes\bitcoin\shell\open\command" "" "$\"$INSTDIR\electrum-satori-${PRODUCT_VERSION}.exe$\" $\"%1$\""
   ;WriteRegStr HKCU "Software\Classes\lightning" "" "URL:lightning Protocol"
   ;WriteRegStr HKCU "Software\Classes\lightning" "URL Protocol" ""
-  ;WriteRegStr HKCU "Software\Classes\lightning" "DefaultIcon" "$\"$INSTDIR\electrum-evrmore.ico, 0$\""
-  ;WriteRegStr HKCU "Software\Classes\lightning\shell\open\command" "" "$\"$INSTDIR\electrum-evrmore-${PRODUCT_VERSION}.exe$\" $\"%1$\""
+  ;WriteRegStr HKCU "Software\Classes\lightning" "DefaultIcon" "$\"$INSTDIR\electrum-satori.ico, 0$\""
+  ;WriteRegStr HKCU "Software\Classes\lightning\shell\open\command" "" "$\"$INSTDIR\electrum-satori-${PRODUCT_VERSION}.exe$\" $\"%1$\""
 
   ;Adds an uninstaller possibility to Windows Uninstall or change a program section
   WriteRegStr HKCU "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
@@ -148,7 +148,7 @@ Section
   WriteRegStr HKCU "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
   WriteRegStr HKCU "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
   WriteRegStr HKCU "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
-  WriteRegStr HKCU "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\electrum-evrmore.ico"
+  WriteRegStr HKCU "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\electrum-satori.ico"
 
   ;Fixes Windows broken size estimates
   ${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
@@ -171,7 +171,7 @@ Section "Uninstall"
   Delete "$SMPROGRAMS\${PRODUCT_NAME}\*.*"
   RMDir  "$SMPROGRAMS\${PRODUCT_NAME}"
 
-  DeleteRegKey HKCU "Software\Classes\evrmore"
+  DeleteRegKey HKCU "Software\Classes\satori"
   DeleteRegKey HKCU "Software\${PRODUCT_NAME}"
   DeleteRegKey HKCU "${PRODUCT_UNINST_KEY}"
 SectionEnd
