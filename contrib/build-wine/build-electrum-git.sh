@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NAME_ROOT=electrum-evrmore
+NAME_ROOT=electrum-satori
 
 export PYTHONDONTWRITEBYTECODE=1  # don't create __pycache__/ folders with .pyc files
 
@@ -49,15 +49,16 @@ info "Installing hardware wallet requirements..."
 $WINE_PYTHON -m pip install --no-build-isolation --no-dependencies --no-warn-script-location \
     --cache-dir "$WINE_PIP_CACHE_DIR" -r "$CONTRIB"/deterministic-build/requirements-hw.txt
 
-#KAWPOW="kawpow-0.9.4.4-cp39-cp39-win32.whl"
-#download_if_not_exist "$CACHEDIR/$KAWPOW" "https://raw.githubusercontent.com/kralverde/electrum-ravencoin-wheels/master/$KAWPOWW"
-#verify_hash "$CACHEDIR/$KAWPOW" "33dd35bf4ab2c819dda33bc407c7632c424e3a2fa13b621cf68be793f7f17630"
-#$WINE_PYTHON -m pip install --cache-dir "$WINE_PIP_CACHE_DIR" "$CACHEDIR/$EVRHASH"
+info "Installing the kawpow wheel..."
+KAWPOW="kawpow-0.9.4.4-cp39-cp39-win32.whl"
+download_if_not_exist "$CACHEDIR/$KAWPOW" "https://raw.githubusercontent.com/kralverde/electrum-ravencoin-wheels/master/$KAWPOW"
+verify_hash "$CACHEDIR/$KAWPOW" "33dd35bf4ab2c819dda33bc407c7632c424e3a2fa13b621cf68be793f7f17630"
+$WINE_PYTHON -m pip install --cache-dir "$WINE_PIP_CACHE_DIR" "$CACHEDIR/$KAWPOW"
 
-info "Installing the evrhash wheel..."
-EVRHASH="evrhash-0.5.1a1-cp39-cp39-win32.whl"
-$WINE_PYTHON -m pip install --no-build-isolation --no-dependencies --no-warn-script-location \
-    --cache-dir "$WINE_PIP_CACHE_DIR" "$CONTRIB/build-wine/wheel/$EVRHASH"
+#info "Installing the evrhash wheel..."
+#EVRHASH="evrhash-0.5.1a1-cp39-cp39-win32.whl"
+#$WINE_PYTHON -m pip install --no-build-isolation --no-dependencies --no-warn-script-location \
+#    --cache-dir "$WINE_PIP_CACHE_DIR" "$CONTRIB/build-wine/wheel/$EVRHASH"
 
 pushd $WINEPREFIX/drive_c/electrum
 # see https://github.com/pypa/pip/issues/2195 -- pip makes a copy of the entire directory
@@ -83,7 +84,7 @@ info "building NSIS installer"
 makensis -DPRODUCT_VERSION=$VERSION electrum.nsi
 
 cd dist
-mv electrum-evrmore-setup.exe $NAME_ROOT-$VERSION-setup.exe
+mv electrum-satori-setup.exe $NAME_ROOT-$VERSION-setup.exe
 cd ..
 
 info "Padding binaries to 8-byte boundaries, and fixing COFF image checksum in PE header"
