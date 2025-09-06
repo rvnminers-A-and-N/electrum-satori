@@ -1,0 +1,24 @@
+# If you want Electrum to appear in a Linux app launcher ("start menu"), install this by doing:
+# sudo desktop-file-install electrum-satori.desktop
+
+[Desktop Entry]
+Comment=Lightweight Satori Client
+Exec=sh -c "PATH=\"\\$HOME/.local/bin:\\$PATH\"; electrum-satori %u"
+GenericName[en_US]=Electrum Satori Wallet
+GenericName[ru_RU]=Electrum Satori Wallet
+GenericName=Electrum Satori Wallet
+Icon=electrum-satori
+Name[en_US]=Electrum Satori Wallet
+Name[ru_RU]=Electrum Satori Wallet
+Name=Electrum Satori Wallet
+Categories=Finance;Network;
+StartupNotify=true
+StartupWMClass=electrum-satori
+Terminal=false
+Type=Application
+MimeType=x-scheme-handler/satori;
+Actions=Testnet;
+
+[Desktop Action Testnet]
+Exec=sh -c "PATH=\"\\$HOME/.local/bin:\\$PATH\"; electrum-satori --testnet %u"
+Name=Testnet mode
