@@ -2,14 +2,13 @@
 
 ## Reporting a Vulnerability
 
-To report security issues send an email to hans_schm1dt@protonmail.com.
+To report security issues send an email to rvnminers@gmail.com.
 
 The following keys may be used to communicate sensitive information to developers:
 
-| Developer Name | Email                       | GPG Fingerprint                                    |
-|----------------|-----------------------------|----------------------------------------------------|
-| Hans Schmidt   | hans_schm1dt@protonmail.com | 7B7C C0B7 16E3 34C8 74D0  5EBC 39FF CBCC 7FF4 12D6 |
-|                |                             |                                                    |
+| Developer Name            | Email                       | GPG Fingerprint                                    |
+|---------------------------|-----------------------------|----------------------------------------------------|
+| α (crypticwizardry.com)   | rvnminers@gmail.com         | (To Be Added)                                      |
 
 You can import a key by running the following command with that
 individual’s fingerprint: `gpg --recv-keys "<fingerprint>"`
