@@ -70,7 +70,7 @@ elif [[ "$3" == "debug" ]] ; then
     export P4A_DEBUG_KEYSTORE="$CONTRIB_ANDROID"/android_debug.keystore
     export P4A_DEBUG_KEYSTORE_PASSWD=unsafepassword
     export P4A_DEBUG_KEYALIAS_PASSWD=unsafepassword
-    export P4A_DEBUG_KEYALIAS=electrum-evrmore
+    export P4A_DEBUG_KEYALIAS=electrum-satori
     # create keystore if needed
     if [ ! -f "$P4A_DEBUG_KEYSTORE" ]; then
         keytool -genkey -v -keystore "$CONTRIB_ANDROID"/android_debug.keystore \
