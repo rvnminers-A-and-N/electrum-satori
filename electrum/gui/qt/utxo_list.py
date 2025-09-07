@@ -33,7 +33,7 @@ from PyQt5.QtWidgets import QAbstractItemView, QMenu
 
 from electrum.i18n import _
 from electrum.transaction import PartialTxInput
-from electrum.util import EvrmoreValue
+from electrum.util import SatoriValue
 
 from .util import MyTreeView, ColorScheme, MONOSPACE_FONT
 
@@ -90,13 +90,13 @@ class UTXOList(MyTreeView):
             address = utxo.address
             height = utxo.block_height
             name_short = utxo.prevout.txid.hex()[:16] + '...' + ":%d" % utxo.prevout.out_idx
-            evr_value = utxo.value_sats()
-            value = evr_value.evr_value.value
-            type = 'EVR'
+            sat_value = utxo.value_sats()
+            value = sat_value.sat_value.value
+            type = 'SAT'
             if value == 0:
                 try:
-                    type = list(evr_value.assets.keys())[0]
-                    value = evr_value.assets[type].value
+                    type = list(sat_value.assets.keys())[0]
+                    value = sat_value.assets[type].value
                 except Exception:
                     pass
             amount = self.parent.format_amount(value, whitespaces=True)
@@ -118,7 +118,7 @@ class UTXOList(MyTreeView):
         if self._spend_set is not None:
             coins = [self._utxo_dict[x] for x in self._spend_set]
             coins = self._filter_frozen_coins(coins)
-            amount = sum((x.value_sats() for x in coins), EvrmoreValue())
+            amount = sum((x.value_sats() for x in coins), SatoriValue())
             amount_str = self.parent.format_amount_and_units(amount)
             num_outputs_str = _("{} outputs available ({} total)").format(len(coins), len(self._utxo_dict))
             self.parent.set_coincontrol_msg(_("Coin control active") + f': {num_outputs_str}, {amount_str}')
