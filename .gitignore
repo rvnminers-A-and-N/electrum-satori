@@ -6,7 +6,7 @@ build/
 dist/
 tmp/
 *.egg/
-Electrum_Evrmore.egg-info/
+Electrum_Satori.egg-info/
 electrum/locale/*
 !electrum/locale/messages.pot
 .devlocaltmp/
