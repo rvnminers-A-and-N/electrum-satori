@@ -41,11 +41,11 @@ import itertools
 import binascii
 import copy
 
-from . import ecc, evrmore, constants, segwit_addr, bip32, assets
+from . import ecc, satori, constants, segwit_addr, bip32, assets
 from .assets import guess_asset_script_for_vin
 from .bip32 import UINT32_MAX, BIP32Node
-from .util import EvrmoreValue, parse_max_spend, to_bytes, bh2u, bfh, chunks, is_hex_str, Satoshis, format_satoshis
-from .evrmore import (TYPE_ADDRESS, TYPE_SCRIPT, hash_160,
+from .util import SatoriValue, parse_max_spend, to_bytes, bh2u, bfh, chunks, is_hex_str, Satoshis, format_satoshis
+from .satori import (TYPE_ADDRESS, TYPE_SCRIPT, hash_160,
                         hash160_to_p2sh, hash160_to_p2pkh, hash_to_segwit_addr,
                         var_int, TOTAL_COIN_SUPPLY_LIMIT_IN_BTC, COIN,
                         int_to_hex, push_script, b58_address_to_hash160,
@@ -117,8 +117,8 @@ class TxOutput:
         self.asset = asset
 
     @property
-    def evrmore_value(self) -> EvrmoreValue:
-        return EvrmoreValue(0, {self.asset: self._value}) if self.asset else EvrmoreValue(self._value)
+    def satori_value(self) -> SatoriValue:
+        return SatoriValue(0, {self.asset: self._value}) if self.asset else SatoriValue(self._value)
 
     @property
     def value(self) -> Union[int, str]:
@@ -131,7 +131,7 @@ class TxOutput:
 
     @classmethod
     def from_address_and_value(cls, address: str, value: Union[int, str], asset: str = None) -> Union['TxOutput', 'PartialTxOutput']:
-        script = bfh(evrmore.address_to_script(address))
+        script = bfh(satori.address_to_script(address))
         if asset:
             script = assets.create_transfer_asset_script(script, asset, value)
 
@@ -158,11 +158,11 @@ class TxOutput:
             raise SerializationError('extra junk at the end of TxOutput bytes')
         return txout
 
-    def to_legacy_tuple(self) -> Tuple[int, str, EvrmoreValue]:
+    def to_legacy_tuple(self) -> Tuple[int, str, SatoriValue]:
         if self.asset:
-            value = EvrmoreValue(0, {self.asset: self.value})
+            value = SatoriValue(0, {self.asset: self.value})
         else:
-            value = EvrmoreValue(self.value)
+            value = SatoriValue(self.value)
         if self.address:
             return TYPE_ADDRESS, self.address, value
         return TYPE_SCRIPT, self.scriptpubkey.hex(), value
@@ -171,16 +171,16 @@ class TxOutput:
     def from_legacy_tuple(cls, _type: int, addr: str, val) -> Union['TxOutput', 'PartialTxOutput']:
 
         if isinstance(val, Dict):
-            val = EvrmoreValue.from_json(val)
+            val = SatoriValue.from_json(val)
         if isinstance(val, int):
-            val = EvrmoreValue(val)
+            val = SatoriValue(val)
 
         asset_d = val.assets
         asset = None
         if asset_d:
             asset, value = list(val.assets.items())[0]
         else:
-            value = val.evr_value
+            value = val.sat_value
 
         if _type == TYPE_ADDRESS:
             return cls.from_address_and_value(addr, value, asset)
@@ -214,9 +214,9 @@ class TxOutput:
 
     def to_json(self):
         if self.asset:
-            value = EvrmoreValue(0, {self.asset: self.value})
+            value = SatoriValue(0, {self.asset: self.value})
         else:
-            value = EvrmoreValue(self.value)
+            value = SatoriValue(self.value)
         d = {
             'scriptpubkey': self.scriptpubkey.hex(),
             'address': self.address,
@@ -322,7 +322,7 @@ class TxInput:
         """
         return self._is_coinbase_output
 
-    def value_sats(self) -> Optional[EvrmoreValue]:
+    def value_sats(self) -> Optional[SatoriValue]:
         return None
 
     def to_json(self):
@@ -563,13 +563,13 @@ SCRIPTPUBKEY_TEMPLATE_ANYSEGWIT = [OP_ANYSEGWIT_VERSION, OPPushDataGeneric(lambd
 
 def check_scriptpubkey_template_and_dust(scriptpubkey, amount: Optional[int]):
     if match_script_against_template(scriptpubkey, SCRIPTPUBKEY_TEMPLATE_P2PKH):
-        dust_limit = evrmore.DUST_LIMIT_P2PKH
+        dust_limit = satori.DUST_LIMIT_P2PKH
     elif match_script_against_template(scriptpubkey, SCRIPTPUBKEY_TEMPLATE_P2SH):
-        dust_limit = evrmore.DUST_LIMIT_P2SH
+        dust_limit = satori.DUST_LIMIT_P2SH
     elif match_script_against_template(scriptpubkey, SCRIPTPUBKEY_TEMPLATE_P2WSH):
-        dust_limit = evrmore.DUST_LIMIT_P2WSH
+        dust_limit = satori.DUST_LIMIT_P2WSH
     elif match_script_against_template(scriptpubkey, SCRIPTPUBKEY_TEMPLATE_P2WPKH):
-        dust_limit = evrmore.DUST_LIMIT_P2WPKH
+        dust_limit = satori.DUST_LIMIT_P2WPKH
     else:
         raise Exception(f'scriptpubkey does not conform to any template: {scriptpubkey.hex()}')
     if amount < dust_limit:
@@ -590,13 +590,13 @@ def match_script_against_template(script, template, debug=False) -> bool:
             return False
 
     # Chop off assets
-    op_evr_asset = len(script)
+    op_sat_asset = len(script)
     for i in range(len(script)):
-        # print(f'Checking OPCODE {script_item[0]} {int(opcodes.OP_EVR_ASSET)}')
-        if script[i][0] == int(opcodes.OP_EVR_ASSET): # Don't check past op EVR asset
-            op_evr_asset = i
+        # print(f'Checking OPCODE {script_item[0]} {int(opcodes.OP_SAT_ASSET)}')
+        if script[i][0] == int(opcodes.OP_SAT_ASSET): # Don't check past op SAT asset
+            op_sat_asset = i
             break
-    script = script[:op_evr_asset]
+    script = script[:op_sat_asset]
     
     if debug:
         _logger.debug(f"match script against template: {script}")
@@ -647,7 +647,7 @@ def is_output_script_p2pk(_bytes: bytes) -> bool:
 
     decoded = []
     for tup in raw_decoded:
-        if tup[0] == opcodes.OP_EVR_ASSET:
+        if tup[0] == opcodes.OP_SAT_ASSET:
             break
         decoded.append(tup)
 
@@ -666,7 +666,7 @@ def is_asset_output_script_malformed_or_non_standard(_bytes: bytes) -> bool:
     decoded = []
     record = False
     for tup in raw_decoded:
-        if tup[0] == opcodes.OP_EVR_ASSET:
+        if tup[0] == opcodes.OP_SAT_ASSET:
             record = True
         if record:
             decoded.append(tup)
@@ -674,7 +674,7 @@ def is_asset_output_script_malformed_or_non_standard(_bytes: bytes) -> bool:
     asset_portion = BCDataStream()
     try:
         asset_portion.write(decoded[1][1])
-        assert asset_portion.read_bytes(3) == b'evr'
+        assert asset_portion.read_bytes(3) == b'sat'
         script_type = asset_portion.read_bytes(1)
         asset_name_len = asset_portion.read_bytes(1)[0]
         asset_name = asset_portion.read_bytes(asset_name_len)
@@ -711,7 +711,7 @@ def get_address_from_output_script(_bytes: bytes, *, net=None) -> Optional[str]:
 
     decoded = []
     for tup in raw_decoded:
-        if tup[0] == opcodes.OP_EVR_ASSET:
+        if tup[0] == opcodes.OP_SAT_ASSET:
             break
         decoded.append(tup)
 
@@ -774,18 +774,18 @@ def get_assets_from_script(script: bytes) -> Dict[str, int]:
 
     # TODO: Generalize
 
-    def search_for_evr(b: bytes, start: int) -> int:
+    def search_for_sat(b: bytes, start: int) -> int:
         index = -1
-        if b[start:start+3] == b'evr':
+        if b[start:start+3] == b'sat':
             index = start+3
-        elif b[start+1:start+4] == b'evr':
+        elif b[start+1:start+4] == b'sat':
             index = start+4
         return index
 
     if script[0] == 0xA9 and script[1] == 0x14 and script[22] == 0x87:  # Script hash
-        index = search_for_evr(script, 25)
+        index = search_for_sat(script, 25)
     else:  # Assumed Pubkey hash
-        index = search_for_evr(script, 27)
+        index = search_for_sat(script, 27)
 
     if index > 0:
         type = script[index]
@@ -1047,7 +1047,7 @@ class Transaction:
             script = ''
         elif _type == 'p2wpkh-p2sh':
             raise NotImplementedError()
-            redeem_script = evrmore.p2wpkh_nested_script(pubkeys[0])
+            redeem_script = satori.p2wpkh_nested_script(pubkeys[0])
             script = construct_script([redeem_script])
         elif _type == 'p2wsh-p2sh':
             raise NotImplementedError()
@@ -1055,7 +1055,7 @@ class Transaction:
                 witness_script = ''
             else:
                 witness_script = self.get_preimage_script(txin)
-            redeem_script = evrmore.p2wsh_nested_script(witness_script)
+            redeem_script = satori.p2wsh_nested_script(witness_script)
             script = construct_script([redeem_script])
         else:
             raise UnknownTxinType(f'cannot construct scriptSig for txin_type: {_type} {txin.scriptpubkey}')
@@ -1080,10 +1080,10 @@ class Transaction:
         elif txin.script_type in ['p2pkh', 'p2wpkh', 'p2wpkh-p2sh']:
             pubkey = pubkeys[0]
             pkh = bh2u(hash_160(bfh(pubkey)))
-            script = evrmore.pubkeyhash_to_p2pkh_script(pkh)
+            script = satori.pubkeyhash_to_p2pkh_script(pkh)
         elif txin.script_type == 'p2pk':
             pubkey = pubkeys[0]
-            script = evrmore.public_key_to_p2pk_script(pubkey)
+            script = satori.public_key_to_p2pk_script(pubkey)
         else:
             raise UnknownTxinType(f'cannot construct preimage_script for txin_type: {txin.script_type}')
 
@@ -1219,7 +1219,7 @@ class Transaction:
 
     def has_unbalanced_assets(self) -> bool:
         try:
-            difference: EvrmoreValue = sum((x.value_sats() for x in self.inputs()), EvrmoreValue()) - sum((x.evrmore_value for x in self.outputs()), EvrmoreValue())
+            difference: SatoriValue = sum((x.value_sats() for x in self.inputs()), SatoriValue()) - sum((x.satori_value for x in self.outputs()), SatoriValue())
         except ValueError:
             return False
         for val in difference.assets.values():
@@ -1243,7 +1243,7 @@ class Transaction:
     @classmethod
     def estimated_output_size_for_address(cls, address: str) -> int:
         """Return an estimate of serialized output size in bytes."""
-        script = evrmore.address_to_script(address)
+        script = satori.address_to_script(address)
         return cls.estimated_output_size_for_script(script)
 
     @classmethod
@@ -1251,7 +1251,7 @@ class Transaction:
         old_var_int_len = len(var_int(base_size)) // 2
         # type (t)ransfer for change
         # change addresses internal length is always < 0x4c
-        additional_bytes = len(b'\xc00evrt0%b00000000\x75' % asset.encode('ascii'))
+        additional_bytes = len(b'\xc00satt0%b00000000\x75' % asset.encode('ascii'))
         new_var_int_len = len(var_int(base_size + additional_bytes)) // 2
         return new_var_int_len - old_var_int_len + additional_bytes
 
@@ -1318,7 +1318,7 @@ class Transaction:
         return set(self._script_to_output_idx[script])  # copy
 
     def get_output_idxs_from_address(self, addr: str) -> Set[int]:
-        script = evrmore.address_to_script(addr)
+        script = satori.address_to_script(addr)
         return self.get_output_idxs_from_scriptpubkey(script)
 
     def output_value_for_address(self, addr):
@@ -1513,7 +1513,7 @@ class PartialTxInput(TxInput, PSBTSection):
         self.script_type = 'unknown'
         self.num_sig = 0  # type: int  # num req sigs for multisig
         self.pubkeys = []  # type: List[bytes]  # note: order matters
-        self.__trusted_value_sats = None  # type: Optional[EvrmoreValue]
+        self.__trusted_value_sats = None  # type: Optional[SatoriValue]
         self._trusted_address = None  # type: Optional[str]
         self.block_height = None  # type: Optional[int]  # height at which the TXO is mined; None means unknown
         self.spent_height = None  # type: Optional[int]  # height at which the TXO got spent
@@ -1528,7 +1528,7 @@ class PartialTxInput(TxInput, PSBTSection):
 
     @_trusted_value_sats.setter
     def _trusted_value_sats(self, v):
-        assert isinstance(v, EvrmoreValue)
+        assert isinstance(v, SatoriValue)
         self.__trusted_value_sats = v
 
     @property
@@ -1615,11 +1615,11 @@ class PartialTxInput(TxInput, PSBTSection):
                                                   f"If a redeemScript is provided, the scriptPubKey must be for that redeemScript")
         if self.witness_script:
             if self.redeem_script:
-                if self.redeem_script != bfh(evrmore.p2wsh_nested_script(self.witness_script.hex())):
+                if self.redeem_script != bfh(satori.p2wsh_nested_script(self.witness_script.hex())):
                     raise PSBTInputConsistencyFailure(f"PSBT input validation: "
                                                       f"If a witnessScript is provided, the redeemScript must be for that witnessScript")
             elif self.address:
-                if self.address != evrmore.script_to_p2wsh(self.witness_script.hex()):
+                if self.address != satori.script_to_p2wsh(self.witness_script.hex()):
                     raise PSBTInputConsistencyFailure(f"PSBT input validation: "
                                                       f"If a witnessScript is provided, the scriptPubKey must be for that witnessScript")
 
@@ -1710,23 +1710,23 @@ class PartialTxInput(TxInput, PSBTSection):
             key_type, key = self.get_keytype_and_key_from_fullkey(full_key)
             wr(key_type, val, key=key)
 
-    def value_sats(self) -> Optional[EvrmoreValue]:
+    def value_sats(self) -> Optional[SatoriValue]:
         if self._trusted_value_sats is not None:
             return self._trusted_value_sats
         if self.utxo:
             out_idx = self.prevout.out_idx
             outpoint = self.utxo.outputs()[out_idx]
             if outpoint.asset:
-                value = EvrmoreValue(0, {outpoint.asset: outpoint.value})
+                value = SatoriValue(0, {outpoint.asset: outpoint.value})
             else:
-                value = EvrmoreValue(outpoint.value)
+                value = SatoriValue(outpoint.value)
             return value
         if self.witness_utxo:
             outpoint = self.witness_utxo
             if outpoint.asset:
-                value = EvrmoreValue(0, {outpoint.asset: outpoint.value})
+                value = SatoriValue(0, {outpoint.asset: outpoint.value})
             else:
-                value = EvrmoreValue(outpoint.value)
+                value = SatoriValue(outpoint.value)
             return value
         return None
 
@@ -1743,7 +1743,7 @@ class PartialTxInput(TxInput, PSBTSection):
     def scriptpubkey(self) -> Optional[bytes]:
         if self._trusted_address is not None:
             a = self.value_sats().assets
-            script = bfh(evrmore.address_to_script(self._trusted_address))
+            script = bfh(satori.address_to_script(self._trusted_address))
             #if a:
             #    asset, amt = list(a.items())[0]
             #    script = assets.create_transfer_asset_script(script, asset, amt)
@@ -1848,7 +1848,7 @@ class PartialTxInput(TxInput, PSBTSection):
         """Whether this input is native segwit. None means inconclusive."""
         if self._is_native_segwit is None:
             if self.address:
-                self._is_native_segwit = evrmore.is_segwit_address(self.address)
+                self._is_native_segwit = satori.is_segwit_address(self.address)
         return self._is_native_segwit
 
     def is_p2sh_segwit(self) -> Optional[bool]:
@@ -1857,7 +1857,7 @@ class PartialTxInput(TxInput, PSBTSection):
             def calc_if_p2sh_segwit_now():
                 if not (self.address and self.redeem_script):
                     return None
-                if self.address != evrmore.hash160_to_p2sh(hash_160(self.redeem_script)):
+                if self.address != satori.hash160_to_p2sh(hash_160(self.redeem_script)):
                     # not p2sh address
                     return False
                 try:
@@ -2268,17 +2268,17 @@ class PartialTransaction(Transaction):
                                 [asset_create_vout]
         self.invalidate_ser_cache()
 
-    def input_value(self) -> EvrmoreValue:
+    def input_value(self) -> SatoriValue:
         input_values = [txin.value_sats() for txin in self.inputs()]
         if any([val is None for val in input_values]):
             raise MissingTxInputAmount()
-        return sum(input_values, EvrmoreValue())
+        return sum(input_values, SatoriValue())
 
-    def output_value(self) -> EvrmoreValue:
+    def output_value(self) -> SatoriValue:
         return \
-            sum([EvrmoreValue(0, {x.asset: x.value}) if x.asset else EvrmoreValue(x.value) for x in self.outputs()], EvrmoreValue())
+            sum([SatoriValue(0, {x.asset: x.value}) if x.asset else SatoriValue(x.value) for x in self.outputs()], SatoriValue())
 
-    def get_fee(self) -> Optional[EvrmoreValue]:
+    def get_fee(self) -> Optional[SatoriValue]:
         try:
             return self.input_value() - self.output_value()
         except MissingTxInputAmount:
