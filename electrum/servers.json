@@ -1,11 +1,11 @@
 {
-  "electrum1-mainnet.evrmorecoin.org": {
+  "electrum1-mainnet.satoriassociation.org": {
     "pruning": "-",
     "s": "50002",
     "t": "50001",
     "version": "1.10"
   },
-  "electrum2-mainnet.evrmorecoin.org": {
+  "electrum2-mainnet.satoriassociation.org": {
     "pruning": "-",
     "s": "50002",
     "t": "50001",
