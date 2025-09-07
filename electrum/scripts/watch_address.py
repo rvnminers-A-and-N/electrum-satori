@@ -12,7 +12,7 @@ from electrum.simple_config import SimpleConfig
 try:
     addr = sys.argv[1]
 except Exception:
-    print("usage: watch_address <evrmore_address>")
+    print("usage: watch_address <satori_address>")
     sys.exit(1)
 
 config = SimpleConfig()
