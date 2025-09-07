@@ -79,11 +79,11 @@ def all_subclasses(cls) -> Set:
 
 ca_path = certifi.where()
 
-base_units = {'EVR': 8}  # {'BTC':8, 'mBTC':5, 'bits':2, 'sat':0}
+base_units = {'SAT': 8}  # {'BTC':8, 'mBTC':5, 'bits':2, 'sat':0}
 base_units_inverse = inv_dict(base_units)
-base_units_list = ['EVR']  # list(dict) does not guarantee order
+base_units_list = ['SAT']  # list(dict) does not guarantee order
 
-DECIMAL_POINT_DEFAULT = 8  # EVR
+DECIMAL_POINT_DEFAULT = 8  # SAT
 
 
 class UnknownBaseUnit(Exception): pass
@@ -118,11 +118,11 @@ def parse_max_spend(amt: Any) -> Optional[int]:
     ```
     """
 
-    if isinstance(amt, EvrmoreValue):
-        def parse_evrmorevalue():
-            evr_max_spend = parse_max_spend(amt.evr_value)
-            if evr_max_spend is not None:
-                return evr_max_spend
+    if isinstance(amt, SatoriValue):
+        def parse_satorivalue():
+            sat_max_spend = parse_max_spend(amt.sat_value)
+            if sat_max_spend is not None:
+                return sat_max_spend
             
             for _, value in amt.assets.items():
                 m_spend = parse_max_spend(value)
@@ -130,7 +130,7 @@ def parse_max_spend(amt: Any) -> Optional[int]:
                     return m_spend
             return None
 
-        return parse_evrmorevalue()
+        return parse_satorivalue()
 
     if not (isinstance(amt, str) and amt and amt[-1] == '!'):
         return None
@@ -349,27 +349,27 @@ class IPFSData(NamedTuple):
     #is_rip14: Optional[bool]  # true/false/unknown
 
 
-class EvrmoreValue:  # The raw EVR value as well as asset values of a transaction
+class SatoriValue:  # The raw SAT value as well as asset values of a transaction
     @staticmethod
     def from_json(d: Dict):
         if d is None:
             return None
-        assert 'EVR' in d and 'ASSETS' in d
-        return EvrmoreValue(d['EVR'], d['ASSETS'])
+        assert 'SAT' in d and 'ASSETS' in d
+        return SatoriValue(d['SAT'], d['ASSETS'])
 
-    def __init__(self, evr: Union[int, Satoshis, str] = 0, assets=None):
+    def __init__(self, sat: Union[int, Satoshis, str] = 0, assets=None):
         if assets is None:
             assets = {}
-        assert isinstance(evr, (int, Satoshis, str))
+        assert isinstance(sat, (int, Satoshis, str))
         assert isinstance(assets, Dict)
-        if isinstance(evr, int):
-            self.__evr_value = Satoshis(evr)
-        elif isinstance(evr, Satoshis):
-            self.__evr_value = evr
-        elif isinstance(evr, str) and '!' in evr:
-            self.__evr_value = evr
+        if isinstance(sat, int):
+            self.__sat_value = Satoshis(sat)
+        elif isinstance(sat, Satoshis):
+            self.__sat_value = sat
+        elif isinstance(sat, str) and '!' in sat:
+            self.__sat_value = sat
         else:
-            raise ValueError(f'Invalid evr value: {evr}')
+            raise ValueError(f'Invalid sat value: {sat}')
         
         self.__asset_value = {}
         for asset, value in assets.items():
@@ -380,37 +380,37 @@ class EvrmoreValue:  # The raw EVR value as well as asset values of a transactio
             elif isinstance(value, str) and '!' in value:
                 pass
             else:
-                raise ValueError(f'Invalid evr value: {evr}')
+                raise ValueError(f'Invalid sat value: {sat}')
 
             self.__asset_value[asset] = value
 
     @property
-    def evr_value(self) -> Union[Satoshis, str]:
-        return self.__evr_value
+    def sat_value(self) -> Union[Satoshis, str]:
+        return self.__sat_value
 
     @property
     def assets(self) -> Dict[str, Union[Satoshis, str]]:
         return copy.copy(self.__asset_value)
 
     def __repr__(self):
-        return 'EvrmoreValue(EVR: {}, ASSETS: {})'.format(self.__evr_value, {k: v.__str__() for k, v in self.__asset_value.items()})
+        return 'SatoriValue(SAT: {}, ASSETS: {})'.format(self.__sat_value, {k: v.__str__() for k, v in self.__asset_value.items()})
 
     def __str__(self):
         ret = []
-        r = self.__evr_value
+        r = self.__sat_value
         if r:
-            ret.append(f'{format_satoshis(r, num_zeros=1)} EVR')
+            ret.append(f'{format_satoshis(r, num_zeros=1)} SAT')
         for a, v in self.__asset_value.items():
             ret.append(f'{format_satoshis(v, num_zeros=1)} {a}')
 
         return ', '.join(ret)
 
     def __add__(self, other):
-        if isinstance(other, EvrmoreValue):
-            if '!' == self.evr_value or '!' == other.evr_value:
+        if isinstance(other, SatoriValue):
+            if '!' == self.sat_value or '!' == other.sat_value:
                 v_r = '!'
             else:
-                v_r = self.evr_value + other.evr_value
+                v_r = self.sat_value + other.sat_value
             v_a = self.assets
             for k, v in other.assets.items():
                 if k in v_a:
@@ -420,13 +420,13 @@ class EvrmoreValue:  # The raw EVR value as well as asset values of a transactio
                         v_a[k] += v
                 else:
                     v_a[k] = v
-            return EvrmoreValue(v_r, v_a)
+            return SatoriValue(v_r, v_a)
         else:
-            raise ValueError('EvrmoreValue required')
+            raise ValueError('SatoriValue required')
 
     def __sub__(self, other):
-        if isinstance(other, EvrmoreValue):
-            v_r = self.evr_value - other.evr_value
+        if isinstance(other, SatoriValue):
+            v_r = self.sat_value - other.sat_value
             v_a = self.assets
             for k, v in other.assets.items():
                 if k in v_a:
@@ -435,36 +435,36 @@ class EvrmoreValue:  # The raw EVR value as well as asset values of a transactio
                         del v_a[k]
                 else:
                     v_a[k] = -v
-            return EvrmoreValue(v_r, v_a)
+            return SatoriValue(v_r, v_a)
         else:
-            raise ValueError('EvrmoreValue required')
+            raise ValueError('SatoriValue required')
 
     def __mul__(self, other):
         if isinstance(other, int):
-            new_evr_value = Satoshis(self.__evr_value.value * other)
+            new_sat_value = Satoshis(self.__sat_value.value * other)
             new_assets = {}
             for asset, val in self.assets.items():
                 new_assets[asset] = val * other
-            return EvrmoreValue(new_evr_value, new_assets)
+            return SatoriValue(new_sat_value, new_assets)
         else:
             raise ValueError('int required')
 
     def __floordiv__(self, other):
         if isinstance(other, int):
-            new_v_r = self.__evr_value.value // other
-            new_evr_value = Satoshis(int(new_v_r))
+            new_v_r = self.__sat_value.value // other
+            new_sat_value = Satoshis(int(new_v_r))
             new_assets = {}
             for asset, val in self.assets.items():
                 new_v_a = val.value // other
                 new_assets[asset] = Satoshis(int(new_v_a))
-            return EvrmoreValue(new_evr_value, new_assets)
+            return SatoriValue(new_sat_value, new_assets)
         else:
             raise ValueError('int required')
 
     def __eq__(self, other):
-        if not isinstance(other, EvrmoreValue):
+        if not isinstance(other, SatoriValue):
             return False
-        if self.__evr_value != other.__evr_value:
+        if self.__sat_value != other.__sat_value:
             return False
         for asset, value in self.__asset_value.items():
             if value != other.__asset_value.get(asset, 0):
@@ -472,16 +472,16 @@ class EvrmoreValue:  # The raw EVR value as well as asset values of a transactio
         return True
         
     def __hash__(self):
-        k1 = hash(self.__evr_value)
+        k1 = hash(self.__sat_value)
         k2 = hash(frozenset(self.__asset_value.items()))
         return int((k1 + k2) * (k1 + k2 + 1) / 2 + k2)
 
     def __lt__(self, other):
-        if isinstance(other, EvrmoreValue):
+        if isinstance(other, SatoriValue):
             o_a = other.assets
             if len(self.__asset_value) == 0 and len(o_a) != 0:
                 return True
-            if self.__evr_value >= other.__evr_value:
+            if self.__sat_value >= other.__sat_value:
                 return False
             for asset, amt in self.__asset_value.items():
                 if asset not in o_a:
@@ -490,13 +490,13 @@ class EvrmoreValue:  # The raw EVR value as well as asset values of a transactio
                     return False
             return True
         else:
-            raise ValueError('EvrmoreValue required')
+            raise ValueError('SatoriValue required')
 
     def __ge__(self, other):
         return not self.__lt__(other)
 
     def __copy__(self):
-        return EvrmoreValue(self.__evr_value, self.__asset_value)
+        return SatoriValue(self.__sat_value, self.__asset_value)
 
     def __deepcopy__(self, memo):
         cls = self.__class__
@@ -508,15 +508,15 @@ class EvrmoreValue:  # The raw EVR value as well as asset values of a transactio
 
     def to_json(self):
         d = {
-            'EVR': self.evr_value if isinstance(self.evr_value, str) else self.evr_value.value,
+            'SAT': self.sat_value if isinstance(self.sat_value, str) else self.sat_value.value,
             'ASSETS': {k: v if isinstance(v, str) else v.value for k, v in self.assets.items()},
         }
         return d
 
     def is_incoming(self):
-        # 0 >= if receiving assets or EVR
+        # 0 >= if receiving assets or SAT
         # <0 for the fee spent
-        return self.evr_value >= 0
+        return self.sat_value >= 0
 
 
 # note: this is not a NamedTuple as then its json encoding cannot be customized
@@ -953,11 +953,11 @@ def user_dir():
     elif 'ANDROID_DATA' in os.environ:
         return android_data_dir()
     elif os.name == 'posix':
-        return os.path.join(os.environ["HOME"], ".electrum-evrmore")
+        return os.path.join(os.environ["HOME"], ".electrum-satori")
     elif "APPDATA" in os.environ:
-        return os.path.join(os.environ["APPDATA"], "Electrum-Evrmore")
+        return os.path.join(os.environ["APPDATA"], "Electrum-Satori")
     elif "LOCALAPPDATA" in os.environ:
-        return os.path.join(os.environ["LOCALAPPDATA"], "Electrum-Evrmore")
+        return os.path.join(os.environ["LOCALAPPDATA"], "Electrum-Satori")
     else:
         # raise Exception("No home directory found in environment variables.")
         return
@@ -1177,16 +1177,16 @@ def time_difference(distance_in_time, include_seconds):
 
 
 mainnet_block_explorers = {
-    'evr.cryptoscope.io': ('https://evr.cryptoscope.io/',
+    'sat.cryptoscope.io': ('https://sat.cryptoscope.io/',
                           {'tx': 'tx/?txid=', 'addr': 'address/?address='}),
-    'evr-explorer-mainnet.ting.finance': ('https://evr-explorer-mainnet.ting.finance/',
+    'sat-explorer-mainnet.ting.finance': ('https://sat-explorer-mainnet.ting.finance/',
                        {'tx': 'index.html?route=TRANSACTION&id=', 'addr': 'index.html?route=ADDRESS&address='}),
 }
 
 testnet_block_explorers = {
-    'evrt.cryptoscope.io': ('https://evrt.cryptoscope.io/',
+    'satt.cryptoscope.io': ('https://satt.cryptoscope.io/',
                           {'tx': 'tx/?txid=', 'addr': 'address/?address='}),
-    'tevr.hyperbit.app': ('https://tevr.hyperbit.app/',
+    'tsat.hyperbit.app': ('https://tsat.hyperbit.app/',
                            {'tx': 'explorer/transactions/', 'addr': 'explorer/addresses/'}),
 }
 
@@ -1273,7 +1273,7 @@ def block_explorer(config: 'SimpleConfig') -> Optional[str]:
     """
     if config.get('block_explorer_custom') is not None:
         return None
-    default_ = 'evr.cryptoscope.io'
+    default_ = 'sat.cryptoscope.io'
     be_key = config.get('block_explorer', default_)
     be_tuple = block_explorer_info().get(be_key)
     if be_tuple is None:
@@ -1317,7 +1317,7 @@ def block_explorer_URL(config: 'SimpleConfig', kind: str, item: str) -> Optional
 
 
 # note: when checking against these, use .lower() to support case-insensitivity
-BITCOIN_BIP21_URI_SCHEME = 'evrmore'
+BITCOIN_BIP21_URI_SCHEME = 'satori'
 LIGHTNING_URI_SCHEME = 'lightning'
 
 
@@ -1327,21 +1327,21 @@ class InvalidBitcoinURI(Exception): pass
 # TODO rename to parse_bip21_uri or similar
 def parse_URI(uri: str, on_pr: Callable = None, *, loop=None) -> dict:
     """Raises InvalidBitcoinURI on malformed URI."""
-    from . import evrmore
-    from .evrmore import COIN, TOTAL_COIN_SUPPLY_LIMIT_IN_BTC
+    from . import satori
+    from .satori import COIN, TOTAL_COIN_SUPPLY_LIMIT_IN_BTC
     from .lnaddr import lndecode
 
     if not isinstance(uri, str):
         raise InvalidBitcoinURI(f"expected string, not {repr(uri)}")
 
     if ':' not in uri:
-        if not evrmore.is_address(uri):
-            raise InvalidBitcoinURI("Not a evrmore address")
+        if not satori.is_address(uri):
+            raise InvalidBitcoinURI("Not a satori address")
         return {'address': uri}
 
     u = urllib.parse.urlparse(uri)
     if u.scheme.lower() != BITCOIN_BIP21_URI_SCHEME:
-        raise InvalidBitcoinURI("Not a evrmore URI")
+        raise InvalidBitcoinURI("Not a satori URI")
     address = u.path
 
     # python for android fails to parse query
@@ -1357,7 +1357,7 @@ def parse_URI(uri: str, on_pr: Callable = None, *, loop=None) -> dict:
 
     out = {k: v[0] for k, v in pq.items()}
     if address:
-        if not evrmore.is_address(address):
+        if not satori.is_address(address):
             raise InvalidBitcoinURI(f"Invalid bitcoin address: {address}")
         out['address'] = address
     if 'amount' in out:
@@ -1392,7 +1392,7 @@ def parse_URI(uri: str, on_pr: Callable = None, *, loop=None) -> dict:
             raise InvalidBitcoinURI(f"failed to parse 'exp' field: {repr(e)}") from e
     if 'sig' in out:
         try:
-            out['sig'] = bh2u(evrmore.base_decode(out['sig'], base=58))
+            out['sig'] = bh2u(satori.base_decode(out['sig'], base=58))
         except Exception as e:
             raise InvalidBitcoinURI(f"failed to parse 'sig' field: {repr(e)}") from e
     if 'lightning' in out:
@@ -1430,8 +1430,8 @@ def parse_URI(uri: str, on_pr: Callable = None, *, loop=None) -> dict:
 
 def create_bip21_uri(addr, amount_sat: Optional[int], message: Optional[str],
                      *, extra_query_params: Optional[dict] = None) -> str:
-    from . import evrmore
-    if not evrmore.is_address(addr):
+    from . import satori
+    if not satori.is_address(addr):
         return ""
     if extra_query_params is None:
         extra_query_params = {}
@@ -1623,7 +1623,7 @@ class TxMinedInfo(NamedTuple):
 
 def make_aiohttp_session(proxy: Optional[dict], headers=None, timeout=None):
     if headers is None:
-        headers = {'User-Agent': 'Electrum-Evrmore'}
+        headers = {'User-Agent': 'Electrum-Satori'}
     if timeout is None:
         # The default timeout is high intentionally.
         # DNS on some systems can be really slow, see e.g. #5337
