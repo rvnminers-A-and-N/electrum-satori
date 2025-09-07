@@ -96,7 +96,7 @@ class AmountEdit(SizedFreezableLineEdit):
         self.setText("%d"%x)
 
 
-class EVRAmountEdit(AmountEdit):
+class SATAmountEdit(AmountEdit):
 
     def __init__(self, decimal_point, asset_base_unit=None, is_int=False, parent=None):
         AmountEdit.__init__(self, asset_base_unit or self._base_unit, is_int, parent)
@@ -129,13 +129,13 @@ class EVRAmountEdit(AmountEdit):
         self.repaint()  # macOS hack for #6269
 
 
-class PayToAmountEdit(EVRAmountEdit):
+class PayToAmountEdit(SATAmountEdit):
     def __init__(self, decimal_point, asset_base_unit, is_int=False, parent=None):
-        EVRAmountEdit.__init__(self, decimal_point, asset_base_unit, is_int, parent)
+        SATAmountEdit.__init__(self, decimal_point, asset_base_unit, is_int, parent)
         self.decimal_point = lambda: decimal_point() if asset_base_unit() in base_units_list else 8
 
 
-class FeerateEdit(EVRAmountEdit):
+class FeerateEdit(SATAmountEdit):
 
     def __init__(self, decimal_point, is_int=False, parent=None):
         super().__init__(decimal_point, is_int, parent)
@@ -145,7 +145,7 @@ class FeerateEdit(EVRAmountEdit):
         return 'sat/byte'
 
     def get_amount(self):
-        sat_per_byte_amount = EVRAmountEdit.get_amount(self)
+        sat_per_byte_amount = SATAmountEdit.get_amount(self)
         return quantize_feerate(sat_per_byte_amount)
 
     def setAmount(self, amount):
