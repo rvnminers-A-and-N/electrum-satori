@@ -46,7 +46,7 @@ is_android = 'ANDROID_DATA' in os.environ
 is_appimage = 'APPIMAGE' in os.environ
 # is_local: unpacked tar.gz but not pip installed, or git clone
 is_local = (not is_pyinstaller and not is_android and not is_appimage
-            and os.path.exists(os.path.join(script_dir, "electrum-evrmore.desktop")))
+            and os.path.exists(os.path.join(script_dir, "electrum-satori.desktop")))
 is_git_clone = is_local and os.path.exists(os.path.join(script_dir, ".git"))
 
 if is_git_clone:
@@ -350,7 +350,7 @@ def main():
     if config_options.get('portable'):
         if is_local:
             # running from git clone or local source: put datadir next to main script
-            datadir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'electrum_evrmore_data')
+            datadir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'electrum_satori_data')
         else:
             # Running a binary or installed source. The most generic but still reasonable thing
             # is to use the current working directory. (see #7732)
@@ -358,7 +358,7 @@ def main():
             #       and we don't want to put the datadir inside a temp dir.
             # note: Re the portable .exe on Windows, when the user double-clicks it, CWD gets set
             #       to the parent dir, i.e. we will put the datadir next to the exe.
-            datadir = os.path.join(os.path.realpath(cwd), 'electrum_evrmore_data')
+            datadir = os.path.join(os.path.realpath(cwd), 'electrum_satori_data')
         config_options['electrum_path'] = datadir
 
     if not config_options.get('verbosity'):
