@@ -108,7 +108,7 @@ class InvoiceList(MyTreeView):
             if item.is_lightning():
                 icon_name = 'lightning.png'
             else:
-                icon_name = 'evrmore.png'
+                icon_name = 'satori.png'
                 if item.bip70:
                     icon_name = 'seal.png'
             status = self.wallet.get_invoice_status(item)
@@ -121,7 +121,7 @@ class InvoiceList(MyTreeView):
                 if a:
                     asset_str, amount = list(a.items())[0]
                 else:
-                    amount = amount.evr_value
+                    amount = amount.sat_value
             timestamp = item.time or 0
             date_str = format_time(timestamp) if timestamp else _('Unknown')
             amount_str = self.parent.format_amount(amount, whitespaces=True)
@@ -171,7 +171,7 @@ class InvoiceList(MyTreeView):
             menu.addAction(_("Details"), lambda: self.parent.show_lightning_invoice(invoice))
         else:
             if len(invoice.outputs) == 1:
-                menu.addAction(_("Copy Address"), lambda: self.parent.do_copy(invoice.get_address(), title='evrmore Address'))
+                menu.addAction(_("Copy Address"), lambda: self.parent.do_copy(invoice.get_address(), title='satori Address'))
             menu.addAction(_("Details"), lambda: self.parent.show_onchain_invoice(invoice))
         status = wallet.get_invoice_status(invoice)
         if status == PR_UNPAID:
