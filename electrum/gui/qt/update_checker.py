@@ -21,14 +21,14 @@ from electrum._vendor.distutils.version import StrictVersion
 
 
 VERSION_ANNOUNCEMENT_SIGNING_KEYS = (
-        "EXn7nzAi1KZjyxkzKLYjeUZYcMtF1zCp53",   # kralverde "RPuQNvDVBC5Q4fXKyfYLjrunbyqiEYckP5" translated to EVR address
+        "EXn7nzAi1KZjyxkzKLYjeUZYcMtF1zCp53",   # kralverde "RPuQNvDVBC5Q4fXKyfYLjrunbyqiEYckP5" translated to SAT address
         "EaBGnWtDiAseYZiyvNT1u3WTjAeYtAR7MV"    # Hans_Schmidt address
     )
 
 
 class UpdateCheck(QDialog, Logger):
-    url = "https://raw.githubusercontent.com/EvrmoreOrg/electrum-evrmore/master/check-version.json"
-    download_url = "https://github.com/EvrmoreOrg/electrum-evrmore/releases"
+    url = "https://raw.githubusercontent.com/SatoriNetwork/electrum-satori/master/check-version.json"
+    download_url = "https://github.com/SatoriNetwork/electrum-satori/releases"
 
     class VerifyUpdateHashes(QWidget):
         def __init__(self):
@@ -70,7 +70,7 @@ class UpdateCheck(QDialog, Logger):
                 try:
                     # This can throw on invalid base64
                     sig = base64.b64decode(str(signature.toPlainText()))
-                    verified = ecc.verify_message_with_address(address, sig, message, net=constants.EvrmoreMainnet)
+                    verified = ecc.verify_message_with_address(address, sig, message, net=constants.SatoriMainnet)
                     break
                 except:
                     pass
@@ -180,7 +180,7 @@ class UpdateCheckThread(QThread, Logger):
                     sig = base64.b64decode(sig)
                     msg = version_num.encode('utf-8')
                     if ecc.verify_message_with_address(address=address, sig65=sig, message=msg,
-                                                       net=constants.EvrmoreMainnet):
+                                                       net=constants.SatoriMainnet):
                         self.logger.info(f"valid sig for version announcement '{version_num}' from address '{address}'")
                         break
                 else:
