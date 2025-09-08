@@ -109,13 +109,13 @@ class SatoriMainnet(AbstractNet):
     NET_NAME = "mainnet"
     TESTNET = False
     WIF_PREFIX = 128
-    ADDRTYPE_P2PKH = 33
-    ADDRTYPE_P2SH = 92
-    ADDRTYPE_P2SH_ALT = 92
+    ADDRTYPE_P2PKH = 63
+    ADDRTYPE_P2SH = 125
+    ADDRTYPE_P2SH_ALT = 125
     MATURE = 60             # max fork reorg depth
     SEGWIT_HRP = ""
     BOLT11_HRP = SEGWIT_HRP
-    GENESIS = "0000007b11d0481b2420a7c656ef76775d54ab5b29ee7ea250bc768535693b05"
+    GENESIS = "0000000000000000000000000000000000000000000000000000000000000000"
     DEFAULT_PORTS = {'t': '50001', 's': '50002'}
     DEFAULT_SERVERS = read_json('servers.json', {})
     CHECKPOINTS = read_json('checkpoints.json', [])
@@ -155,16 +155,16 @@ class SatoriMainnet(AbstractNet):
     )
 
     BURN_ADDRESSES = BurnAddresses(
-        IssueAssetBurnAddress="EXissueAssetXXXXXXXXXXXXXXXXYiYRBD",
-        ReissueAssetBurnAddress="EXReissueAssetXXXXXXXXXXXXXXY1ANQH",
-        IssueSubAssetBurnAddress="EXissueSubAssetXXXXXXXXXXXXXWW1ASo",
-        IssueUniqueAssetBurnAddress="EXissueUniqueAssetXXXXXXXXXXTZjZJ5",
-        IssueMsgChannelAssetBurnAddress="EXissueMsgChanneLAssetXXXXXXXD3mRa",
-        IssueQualifierAssetBurnAddress="EXissueQuaLifierXXXXXXXXXXXXW5Zxyf",
-        IssueSubQualifierAssetBurnAddress="EXissueSubQuaLifierXXXXXXXXXUgTjtu",
-        IssueRestrictedAssetBurnAddress="EXissueRestrictedXXXXXXXXXXXZZMynb",
-        AddNullQualifierTagBurnAddress="EXaddTagBurnXXXXXXXXXXXXXXXXb5HLXh",
-        GlobalBurnAddress="EXBurnXXXXXXXXXXXXXXXXXXXXXXZ8ZjfN",
+        IssueAssetBurnAddress="SXissueAssetXXXXXXXXXXXXXXXXZQWUCH",
+        ReissueAssetBurnAddress="SXReissueAssetXXXXXXXXXXXXXXcpRJXL",
+        IssueSubAssetBurnAddress="SXissueSubAssetXXXXXXXXXXXXXbxqMAu",
+        IssueUniqueAssetBurnAddress="SXissueUniqueAssetXXXXXXXXXXXD8K19",
+        IssueMsgChannelAssetBurnAddress="SXissueMsgChanneLAssetXXXXXXXaHqHe",
+        IssueQualifierAssetBurnAddress="SXissueQuaLifierXXXXXXXXXXXXYKsJpj",
+        IssueSubQualifierAssetBurnAddress="SXissueSubQuaLifierXXXXXXXXXWHYhGy",
+        IssueRestrictedAssetBurnAddress="SXissueRestrictedXXXXXXXXXXXc4zt2c",
+        AddNullQualifierTagBurnAddress="SXaddTagBurnXXXXXXXXXXXXXXXXdFNcCk",
+        GlobalBurnAddress="SXBurnXXXXXXXXXXXXXXXXXXXXXXb3FNBR",
     )
 
 
@@ -176,13 +176,13 @@ class SatoriTestnet(AbstractNet):
     ]
     TESTNET = True
     WIF_PREFIX = 239
-    ADDRTYPE_P2PKH = 111
-    ADDRTYPE_P2SH = 196
-    ADDRTYPE_P2SH_ALT = 196
+    ADDRTYPE_P2PKH = 65
+    ADDRTYPE_P2SH = 127
+    ADDRTYPE_P2SH_ALT = 127
     MATURE = 60             # max fork reorg depth
     SEGWIT_HRP = ""
     BOLT11_HRP = SEGWIT_HRP
-    GENESIS = "00000044bc03f8460e64bc07b080f4929b1cb96fda46b8bd806e57bfb9db82f4"
+    GENESIS = "0000009cd13524a0b205646977714262ac05216b3f7ae35ada78d27bc8521292"
     DEFAULT_PORTS = {'t': '51001', 's': '51002'}
     DEFAULT_SERVERS = read_json('servers_testnet.json', {})
     CHECKPOINTS = []
