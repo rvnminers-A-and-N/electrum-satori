@@ -18,10 +18,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update -q && \
     apt-get install -qy --allow-downgrades \
-        # For evrhash
+        # For Kawpow
         cmake \
         g++ \
-        # End for evrhash
+        # End for Kawpow
         sudo \
         git \
         wget \
