@@ -164,7 +164,7 @@ info "installing electrum and its dependencies."
 "$python" -m pip install --no-build-isolation --no-dependencies --no-binary :all: --only-binary PyQt5,PyQt5-Qt5,cryptography --no-warn-script-location \
     --cache-dir "$PIP_CACHE_DIR" -r "$CONTRIB/deterministic-build/requirements-binaries.txt"
 
-# For evrhash, we are creating a local pypi since we haven't uploaded to pypi.org
+# For kawpow, we are creating a local pypi since evrhash wasn't uploaded to pypi.org and we converted over to kawpow again for now, but left the logic for future algo changes
 #"$python" -m pip install --no-binary :all: --no-warn-script-location \
 #    --cache-dir "$PIP_CACHE_DIR" -r "$CONTRIB/deterministic-build/requirements-satori-binaries.txt"
 info "the ENV value PROJECT_ROOT is: $PROJECT_ROOT"
