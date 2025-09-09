@@ -21,8 +21,8 @@ from electrum._vendor.distutils.version import StrictVersion
 
 
 VERSION_ANNOUNCEMENT_SIGNING_KEYS = (
-        "EXn7nzAi1KZjyxkzKLYjeUZYcMtF1zCp53",   # kralverde "RPuQNvDVBC5Q4fXKyfYLjrunbyqiEYckP5" translated to SAT address
-        "EaBGnWtDiAseYZiyvNT1u3WTjAeYtAR7MV"    # Hans_Schmidt address
+        "TNDte3nzRjGX1GJr1hfabZiBekYoU81Th2",   # TSAT address, will be SAT address for mainnet
+        "TAFmFhmfTxZnbuif11RZFHvQuRVhHhSyeN"    # Second TSAT address, will be SAT address for mainnet
     )
 
 
