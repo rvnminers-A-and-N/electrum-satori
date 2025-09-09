@@ -63,8 +63,8 @@ RUN apt-get update -q && \
         libxcb-icccm4 \
         libxcb-image0 \
         libxcb-keysyms1 \
-        libxcb-util0 \
-        #libxcb-util1 \
+        #libxcb-util0 \
+        libxcb-util1 \
         libxcb-render-util0 \
         libx11-xcb1 \
         libc6-dev \
