@@ -1,6 +1,30 @@
+# Electrum-Satori v0.6.1 - the 1st Evrmore port of Electrum
 
+  This is the first version of Electrum for Satori.
+  It supports SAT and Satori assets.
 
-# Electrum-Evrmore v0.5.2 - the 1st Evrmore port of Electrum
+  Binaries are being released for Linux (AppImage) and for
+  Windows (exe, portable exe, and an installer). And of course
+  the source code. Mac/iOs and Android are not supported.
+  Only Qt display interface is supported.
+
+  Hardware wallets are not yet supported (but should not be
+  difficult to get working).
+
+  Note that the electrumX servers understand the 84,600 Block
+  Airdrop expiration, so if you had SAT from the airdrop which
+  you did not claim before block height 84,600, they will NOT be show in the Electrum
+  balance since they are unspendable (worthless).
+
+  I hope you enjoy this release and find it useful. But as with most
+  software of this type, please remember that it is alpha-stage 
+  software which is largely untested and likely to contain bugs. 
+  So use it carefully and take precautions against loss of tokens. 
+  Use at your own risk. All liability is waived.
+
+# ==== Below refer to electrum-bitcoin, electrum-ravencoin, or electrum-evrmore =======
+
+# Electrum-Satori v0.5.2 - the 1st Evrmore port of Electrum
 
   This is the first version of Electrum for Evrmore.
   It supports EVR and Evrmore assets.
@@ -23,8 +47,6 @@
   software which is largely untested and likely to contain bugs. 
   So use it carefully and take precautions against loss of tokens. 
   Use at your own risk. All liability is waived.
-
-# ==== Below refer to electrum-bitcoin or electrum-ravencoin =======
 
 # Release 4.3.0 - (not released yet)
 
