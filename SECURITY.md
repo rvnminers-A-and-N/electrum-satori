@@ -8,7 +8,7 @@ The following keys may be used to communicate sensitive information to developer
 
 | Developer Name            | Email                       | GPG Fingerprint                                    |
 |---------------------------|-----------------------------|----------------------------------------------------|
-| α (crypticwizardry.com)   | rvnminers@gmail.com         | (To Be Added)                                      |
+| α (crypticwizardry.com)   | rvnminers@gmail.com         | 74D0 5802 F0EC C13B 6F14  DEC2 2FA7 9C72 7691 FA50 |
 
 You can import a key by running the following command with that
 individual’s fingerprint: `gpg --recv-keys "<fingerprint>"`
