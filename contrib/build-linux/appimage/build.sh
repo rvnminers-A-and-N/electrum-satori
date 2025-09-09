@@ -44,6 +44,7 @@ info "building binary..."
 docker run -it \
     --name electrum-appimage-builder-cont \
     -v "$PROJECT_ROOT_OR_FRESHCLONE_ROOT":/opt/electrum \
+    --user "$(id -u):$(id -g)" \
     --rm \
     --workdir /opt/electrum/contrib/build-linux/appimage \
     electrum-appimage-builder-img \
