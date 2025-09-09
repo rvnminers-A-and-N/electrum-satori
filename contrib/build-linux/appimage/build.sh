@@ -47,7 +47,7 @@ docker run -it \
     --rm \
     --workdir /opt/electrum/contrib/build-linux/appimage \
     electrum-appimage-builder-img \
-    ./make_appimage.sh
+    bash -c "git config --global --add safe.directory /opt/electrum && ./make_appimage.sh"
 
 # make sure resulting binary location is independent of fresh_clone
 if [ ! -z "$ELECBUILD_COMMIT" ] ; then
