@@ -44,11 +44,10 @@ info "building binary..."
 docker run -it \
     --name electrum-appimage-builder-cont \
     -v "$PROJECT_ROOT_OR_FRESHCLONE_ROOT":/opt/electrum \
-    --user "$(id -u):$(id -g)" \
     --rm \
     --workdir /opt/electrum/contrib/build-linux/appimage \
     electrum-appimage-builder-img \
-    bash -c "git config --global --add safe.directory /opt/electrum && ./make_appimage.sh"
+    ./make_appimage.sh
 
 # make sure resulting binary location is independent of fresh_clone
 if [ ! -z "$ELECBUILD_COMMIT" ] ; then
