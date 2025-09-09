@@ -45,7 +45,8 @@ docker run -it \
     --name electrum-appimage-builder-cont \
     -v "$PROJECT_ROOT_OR_FRESHCLONE_ROOT":/opt/electrum \
     --rm \
-    --user root \
+    -e GIT_CONFIG_GLOBAL=/dev/null \
+    -e GIT_CONFIG_SYSTEM=/dev/null \
     --workdir /opt/electrum/contrib/build-linux/appimage \
     electrum-appimage-builder-img \
     ./make_appimage.sh
