@@ -56,9 +56,9 @@ $WINE_PYTHON -m pip install --no-build-isolation --no-dependencies --no-warn-scr
 #$WINE_PYTHON -m pip install --cache-dir "$WINE_PIP_CACHE_DIR" "$CACHEDIR/$KAWPOW"
 
 info "Installing the Kawpow wheel..."
-EVRHASH="kawpow-0.9.4.4-cp310-cp310-win32.whl"
+KAWPOW="kawpow-0.9.4.4-cp39-cp39-win32.whl"
 $WINE_PYTHON -m pip install --no-build-isolation --no-dependencies --no-warn-script-location \
-    --cache-dir "$WINE_PIP_CACHE_DIR" "$CONTRIB/build-wine/wheel/$EVRHASH"
+    --cache-dir "$WINE_PIP_CACHE_DIR" "$CONTRIB/build-wine/wheel/$KAWPOW"
 
 pushd $WINEPREFIX/drive_c/electrum
 # see https://github.com/pypa/pip/issues/2195 -- pip makes a copy of the entire directory
