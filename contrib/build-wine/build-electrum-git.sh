@@ -10,7 +10,7 @@ set -e
 
 . "$CONTRIB"/build_tools_util.sh
 
-pushd $WINEPREFIX/drive_c/electrum
+pushd /opt/wine64/drive_c/electrum
 
 VERSION=$(git describe --tags --dirty --always)
 info "Last commit: $VERSION"
@@ -18,7 +18,7 @@ info "Last commit: $VERSION"
 # Load electrum-locale for this release
 git submodule update --init
 
-LOCALE="$WINEPREFIX/drive_c/electrum/electrum/locale/"
+LOCALE="/opt/wine64/drive_c/electrum/electrum/locale/"
 # we want the binary to have only compiled (.mo) locale files; not source (.po) files
 rm -rf "$LOCALE"
 "$CONTRIB/build_locale.sh" "$CONTRIB/deterministic-build/electrum-locale/locale/" "$LOCALE"
@@ -60,7 +60,7 @@ KAWPOW="kawpow-0.9.4.4-cp39-cp39-win32.whl"
 $WINE_PYTHON -m pip install --no-build-isolation --no-dependencies --no-warn-script-location \
     --cache-dir "$WINE_PIP_CACHE_DIR" "$CONTRIB/build-wine/wheel/$KAWPOW"
 
-pushd $WINEPREFIX/drive_c/electrum
+pushd /opt/wine64/drive_c/electrum
 # see https://github.com/pypa/pip/issues/2195 -- pip makes a copy of the entire directory
 info "Pip installing Electrum. This might take a long time if the project folder is large."
 $WINE_PYTHON -m pip install --no-build-isolation --no-dependencies --no-warn-script-location .
