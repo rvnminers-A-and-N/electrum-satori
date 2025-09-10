@@ -71,8 +71,8 @@ else
         # note: "-j1" as parallel jobs lead to non-reproducibility seemingly due to ordering issues
         #       see https://github.com/win-iconv/win-iconv/issues/42
         CC="${GCC_TRIPLET_HOST}-gcc" make -j1 || fail "Could not build win-iconv"
-        # FIXME avoid using sudo
-        sudo make install prefix="/usr/${GCC_TRIPLET_HOST}"  || fail "Could not install win-iconv"
+        # FIXME avoid using sudo, I think I have fixed this now
+        make install prefix="/usr/${GCC_TRIPLET_HOST}"  || fail "Could not install win-iconv"
     )
     "$CONTRIB"/make_zbar.sh || fail "Could not build zbar"
 fi
