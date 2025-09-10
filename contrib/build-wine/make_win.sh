@@ -28,7 +28,7 @@ export PIP_CACHE_DIR="$here/.cache/$WIN_ARCH/wine_pip_cache"
 export WINE_PIP_CACHE_DIR="c:/electrum/contrib/build-wine/.cache/$WIN_ARCH/wine_pip_cache"
 export DLL_TARGET_DIR="$CACHEDIR/dlls"
 
-export WINEPREFIX="/opt/wine64"
+export WINEPREFIX="$HOME/.wine"
 export WINEDEBUG=-all
 export WINE_PYHOME="c:/python3"
 export WINE_PYTHON="wine $WINE_PYHOME/python.exe -OO -B"
