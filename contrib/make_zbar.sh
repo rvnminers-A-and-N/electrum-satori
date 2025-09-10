@@ -53,6 +53,8 @@ info "Building $pkgname..."
                 --with-jpeg=no \
                 --with-directshow=yes \
                 --disable-dependency-tracking"
+            export CPPFLAGS="-I$CACHEDIR/win-iconv/dist/include"
+            export LDFLAGS="-L$CACHEDIR/win-iconv/dist/lib"
         elif [ $(uname) == "Darwin" ]; then
             # macos target
             AUTOCONF_FLAGS="$AUTOCONF_FLAGS \
