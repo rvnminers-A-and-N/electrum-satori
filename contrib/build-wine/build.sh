@@ -52,7 +52,7 @@ docker run -it \
     --rm \
     --workdir /opt/wine64/drive_c/electrum/contrib/build-wine \
     electrum-wine-builder-img \
-    bash -c "export HOME=/tmp && ./make_win.sh"
+    bash -c "export HOME=/tmp && export WINEPREFIX=/tmp/.wine && ./make_win.sh"
 
 # make sure resulting binary location is independent of fresh_clone
 if [ ! -z "$ELECBUILD_COMMIT" ] ; then
